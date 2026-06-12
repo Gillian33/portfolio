@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>艺术作品集 · Portfolio</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500&display=swap');
+
+  :root {
+    --cream: #F5F0E8;
+    --warm-white: #FAF8F4;
+    --charcoal: #2C2C2A;
+    --ink: #1A1917;
+    --gold: #B8924A;
+    --gold-light: #E8D5A3;
+    --muted: #8A8680;
+    --dust: #D4CFC5;
+    --sage: #7D8C7C;
+    --blush: #C4967A;
+    --deep-blue: #2D3A52;
+    --burgundy: #6B3A3A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--cream);
+    font-family: 'Inter', 'Noto Serif SC', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ─── CURSOR ─── */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease, background 0.3s;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    width: 40px; height: 40px;
+    border: 1px solid rgba(184,146,74,0.5);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+  }
+
+  /* ─── LOADER ─── */
+  #loader {
+    position: fixed; inset: 0;
+    background: var(--ink);
+    z-index: 10000;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 24px;
+    transition: opacity 0.8s ease, visibility 0.8s;
+  }
+  #loader.hidden { opacity: 0; visibility: hidden; }
+  .loader-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    opacity: 0;
+    animation: fadeInUp 1s 0.5s forwards;
+  }
+  .loader-bar {
+    width: 200px; height: 1px;
+    background: rgba(184,146,74,0.2);
+    position: relative; overflow: hidden;
+  }
+  .loader-bar::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--gold);
+    transform: translateX(-100%);
+    animation: loadBar 1.5s 0.3s ease forwards;
+  }
+  @keyframes loadBar { to { transform: translateX(0); } }
+  @keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    padding: 24px 60px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: linear-gradient(to bottom, rgba(26,25,23,0.95) 0%, transparent 100%);
+    backdrop-filter: blur(8px);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex; gap: 40px; list-style: none;
+  }
+  .nav-links a {
+    color: var(--dust);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0; right: 100%;
+    height: 1px; background: var(--gold);
+    transition: right 0.3s ease;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover::after { right: 0; }
+
+  /* ─── HERO ─── */
+  #hero {
+    height: 100vh; min-height: 700px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(45,58,82,0.4) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 80% at 20% 80%, rgba(107,58,58,0.3) 0%, transparent 60%);
+  }
+  .hero-lines {
+    position: absolute; inset: 0;
+    background-image: 
+      linear-gradient(rgba(184,146,74,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(184,146,74,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero-content {
+    text-align: center; z-index: 1;
+    padding: 0 20px;
+    animation: heroFadeIn 1.2s 1.8s both;
+  }
+  @keyframes heroFadeIn { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+  .hero-eyebrow {
+    font-size: 0.7rem; letter-spacing: 0.4em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 28px;
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+  }
+  .hero-eyebrow::before, .hero-eyebrow::after {
+    content: ''; display: block; width: 40px; height: 1px; background: var(--gold); opacity: 0.5;
+  }
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    line-height: 1.05;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--warm-white);
+    margin-bottom: 8px;
+  }
+  .hero-name em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-subtitle {
+    font-size: clamp(0.85rem, 1.5vw, 1rem);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 24px;
+    margin-bottom: 48px;
+  }
+  .hero-scroll {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: var(--muted); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+  }
+  .scroll-line {
+    width: 1px; height: 60px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 2s infinite;
+  }
+  @keyframes scrollPulse { 0%,100% { opacity:0.3; transform:scaleY(1); } 50% { opacity:1; transform:scaleY(1.2); transform-origin:top; } }
+
+  /* ─── SECTION BASE ─── */
+  section {
+    padding: 100px 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .section-label {
+    font-size: 0.65rem; letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::before { content: ''; display: block; width: 24px; height: 1px; background: var(--gold); }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 400; line-height: 1.15;
+    color: var(--warm-white);
+    margin-bottom: 60px;
+  }
+  .section-title em { font-style: italic; color: var(--gold); }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    width: 100%; height: 1px;
+    background: linear-gradient(to right, transparent, rgba(184,146,74,0.3), transparent);
+    margin: 0 60px;
+    max-width: calc(1400px - 120px);
+  }
+
+  /* ─── ABOUT / INTRO ─── */
+  #about {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .about-visual {
+    position: relative;
+  }
+  .about-photo-frame {
+    aspect-ratio: 3/4;
+    background: linear-gradient(135deg, rgba(45,58,82,0.6), rgba(107,58,58,0.4));
+    border: 1px solid rgba(184,146,74,0.2);
+    position: relative; overflow: hidden;
+    cursor: pointer;
+  }
+  .about-photo-frame::before {
+    content: '';
+    position: absolute; inset: 12px;
+    border: 1px solid rgba(184,146,74,0.15);
+    pointer-events: none; z-index: 1;
+  }
+  .about-photo-placeholder {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px; color: var(--muted); font-size: 0.75rem; letter-spacing: 0.2em;
+  }
+  .photo-icon {
+    width: 48px; height: 48px;
+    border: 1px solid rgba(184,146,74,0.4);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .about-photo-frame img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: none;
+  }
+  .about-photo-frame.has-image img { display: block; }
+  .about-photo-frame.has-image .about-photo-placeholder { display: none; }
+
+  .add-photo-btn {
+    position: absolute; bottom: 16px; right: 16px;
+    background: rgba(26,25,23,0.85);
+    border: 1px solid rgba(184,146,74,0.5);
+    color: var(--gold); padding: 8px 16px;
+    font-size: 0.7rem; letter-spacing: 0.15em; cursor: pointer;
+    transition: all 0.3s; z-index: 2;
+  }
+  .add-photo-btn:hover { background: var(--gold); color: var(--ink); }
+
+  .about-text-wrap { padding-top: 16px; }
+  .about-text-wrap h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem; font-weight: 400; line-height: 1.2;
+    color: var(--warm-white); margin-bottom: 32px;
+  }
+  .about-bio {
+    font-size: 1rem; line-height: 1.9;
+    color: rgba(245,240,232,0.75);
+    margin-bottom: 40px;
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 300;
+  }
+  .about-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px; margin-bottom: 40px;
+  }
+  .stat-item { border-top: 1px solid rgba(184,146,74,0.3); padding-top: 16px; }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem; color: var(--gold); line-height: 1;
+  }
+  .stat-label { font-size: 0.7rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; margin-top: 6px; }
+
+  .skills-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+  .skill-tag {
+    border: 1px solid rgba(184,146,74,0.3);
+    padding: 6px 14px;
+    font-size: 0.7rem; letter-spacing: 0.1em;
+    color: var(--dust); background: rgba(184,146,74,0.05);
+    transition: all 0.3s;
+  }
+  .skill-tag:hover { border-color: var(--gold); color: var(--gold); background: rgba(184,146,74,0.1); }
+
+  /* ─── RESUME ─── */
+  #resume { background: rgba(255,255,255,0.02); border-radius: 2px; }
+  .resume-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+  }
+  .resume-col-title {
+    font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 32px;
+    padding-bottom: 12px; border-bottom: 1px solid rgba(184,146,74,0.2);
+  }
+  .resume-item {
+    margin-bottom: 32px; position: relative; padding-left: 20px;
+  }
+  .resume-item::before {
+    content: ''; position: absolute; left: 0; top: 8px;
+    width: 5px; height: 5px; background: var(--gold);
+    border-radius: 50%;
+  }
+  .resume-item::after {
+    content: ''; position: absolute; left: 2px; top: 16px; bottom: -16px;
+    width: 1px; background: rgba(184,146,74,0.2);
+  }
+  .resume-item:last-child::after { display: none; }
+  .resume-period { font-size: 0.65rem; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 4px; }
+  .resume-role { font-size: 1rem; color: var(--warm-white); margin-bottom: 4px; font-weight: 400; }
+  .resume-org { font-size: 0.8rem; color: var(--muted); font-style: italic; margin-bottom: 8px; }
+  .resume-desc { font-size: 0.85rem; line-height: 1.7; color: rgba(245,240,232,0.6); }
+
+  /* ─── PORTFOLIO SECTIONS ─── */
+  .portfolio-section { padding: 100px 60px; max-width: 1400px; margin: 0 auto; }
+
+  .portfolio-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 60px;
+  }
+  .portfolio-filter {
+    display: flex; gap: 0;
+  }
+  .filter-btn {
+    background: none; border: 1px solid rgba(184,146,74,0.2);
+    color: var(--muted); padding: 8px 20px;
+    font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.3s;
+    margin-left: -1px;
+  }
+  .filter-btn:first-child { margin-left: 0; }
+  .filter-btn.active, .filter-btn:hover { background: rgba(184,146,74,0.1); border-color: var(--gold); color: var(--gold); z-index: 1; }
+
+  /* ─── MASONRY GRID ─── */
+  .work-grid {
+    columns: 3; column-gap: 20px;
+  }
+  .work-card {
+    break-inside: avoid;
+    margin-bottom: 20px;
+    position: relative; overflow: hidden;
+    cursor: pointer;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(184,146,74,0.1);
+    transition: border-color 0.3s;
+  }
+  .work-card:hover { border-color: rgba(184,146,74,0.4); }
+  .work-card:hover .card-overlay { opacity: 1; }
+  .work-card:hover .card-img { transform: scale(1.04); }
+
+  .card-img-wrap { overflow: hidden; }
+  .card-img {
+    width: 100%; display: block;
+    transition: transform 0.6s ease;
+    background: linear-gradient(135deg, rgba(45,58,82,0.8), rgba(26,25,23,0.9));
+  }
+  .card-placeholder {
+    aspect-ratio: 4/3;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px; color: var(--muted); font-size: 0.75rem;
+  }
+  .card-placeholder.tall { aspect-ratio: 3/4; }
+  .card-placeholder .add-icon {
+    width: 40px; height: 40px;
+    border: 1px solid rgba(184,146,74,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; color: var(--gold);
+    transition: all 0.3s;
+  }
+  .work-card:hover .add-icon { background: rgba(184,146,74,0.1); border-color: var(--gold); }
+
+  .card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(26,25,23,0.9) 0%, transparent 50%);
+    opacity: 0; transition: opacity 0.4s;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 20px;
+  }
+  .card-category { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+  .card-title { font-size: 1rem; color: var(--warm-white); font-family: 'Playfair Display', serif; }
+  .card-year { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+
+  .card-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(184,146,74,0.1);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .card-footer-title { font-size: 0.8rem; color: var(--dust); }
+  .card-footer-tag {
+    font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gold); opacity: 0.7;
+  }
+
+  .add-work-btn {
+    background: none; border: 1px dashed rgba(184,146,74,0.3);
+    color: var(--gold); padding: 12px 28px;
+    font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.3s;
+    display: flex; align-items: center; gap: 10px; margin-top: 40px;
+  }
+  .add-work-btn:hover { border-style: solid; border-color: var(--gold); background: rgba(184,146,74,0.08); }
+
+  /* ─── CONTACT ─── */
+  #contact {
+    text-align: center;
+    background: linear-gradient(135deg, rgba(45,58,82,0.3), rgba(107,58,58,0.2));
+    border-top: 1px solid rgba(184,146,74,0.15);
+    border-bottom: 1px solid rgba(184,146,74,0.15);
+    padding: 100px 60px;
+  }
+  #contact .section-title { margin-bottom: 24px; }
+  .contact-sub { color: var(--muted); font-size: 0.9rem; letter-spacing: 0.05em; margin-bottom: 48px; }
+  .contact-links { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; }
+  .contact-link {
+    color: var(--dust); text-decoration: none; font-size: 0.75rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    border-bottom: 1px solid rgba(184,146,74,0.3);
+    padding-bottom: 4px; transition: all 0.3s;
+  }
+  .contact-link:hover { color: var(--gold); border-color: var(--gold); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    text-align: center; padding: 32px 60px;
+    color: rgba(138,134,128,0.5); font-size: 0.7rem; letter-spacing: 0.1em;
+  }
+
+  /* ─── LIGHTBOX ─── */
+  #lightbox {
+    position: fixed; inset: 0; z-index: 9990;
+    background: rgba(26,25,23,0.97);
+    display: none; align-items: center; justify-content: center;
+  }
+  #lightbox.open { display: flex; }
+  .lightbox-inner { max-width: 90vw; max-height: 85vh; position: relative; }
+  .lightbox-inner img { max-width: 100%; max-height: 85vh; display: block; }
+  .lightbox-close {
+    position: fixed; top: 32px; right: 40px;
+    width: 40px; height: 40px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(184,146,74,0.3); color: var(--gold); font-size: 1.2rem;
+    transition: all 0.3s;
+  }
+  .lightbox-close:hover { background: rgba(184,146,74,0.2); }
+
+  /* ─── UPLOAD MODAL ─── */
+  #uploadModal {
+    position: fixed; inset: 0; z-index: 9995;
+    background: rgba(26,25,23,0.9);
+    display: none; align-items: center; justify-content: center;
+  }
+  #uploadModal.open { display: flex; }
+  .modal-box {
+    background: #1e1d1a; border: 1px solid rgba(184,146,74,0.3);
+    padding: 48px; max-width: 520px; width: 90%;
+  }
+  .modal-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--warm-white); margin-bottom: 32px; }
+  .form-group { margin-bottom: 20px; }
+  .form-group label { display: block; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(184,146,74,0.2);
+    color: var(--cream); padding: 12px 16px; font-size: 0.9rem;
+    font-family: inherit; outline: none; transition: border-color 0.3s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold); }
+  .form-group select option { background: #1e1d1a; }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+  .drop-zone {
+    border: 1px dashed rgba(184,146,74,0.3); padding: 40px;
+    text-align: center; cursor: pointer; transition: all 0.3s;
+    color: var(--muted); font-size: 0.8rem;
+  }
+  .drop-zone:hover, .drop-zone.drag-over { border-color: var(--gold); background: rgba(184,146,74,0.05); color: var(--gold); }
+  .drop-zone-icon { font-size: 2rem; margin-bottom: 12px; opacity: 0.5; }
+  .modal-actions { display: flex; gap: 12px; margin-top: 32px; }
+  .btn-primary {
+    background: var(--gold); color: var(--ink);
+    border: none; padding: 14px 32px;
+    font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.3s; flex: 1;
+  }
+  .btn-primary:hover { background: #c9a05a; }
+  .btn-cancel {
+    background: none; border: 1px solid rgba(184,146,74,0.3);
+    color: var(--muted); padding: 14px 32px;
+    font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.3s;
+  }
+  .btn-cancel:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ─── ANIMATIONS ─── */
+  .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--ink); }
+  ::-webkit-scrollbar-thumb { background: var(--gold); opacity: 0.5; }
+
+  /* ─── SECTION FULL-WIDTH WRAPPER ─── */
+  .section-wrap { max-width: 100%; overflow: hidden; }
+
+  /* ─── INTRO QUOTE ─── */
+  .intro-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-style: italic;
+    color: var(--gold);
+    text-align: center;
+    padding: 80px 10%;
+    line-height: 1.6;
+    border-top: 1px solid rgba(184,146,74,0.1);
+    border-bottom: 1px solid rgba(184,146,74,0.1);
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .intro-quote span { color: var(--warm-white); }
+
+  /* ─── TYPE BADGE ─── */
+  .type-indicator {
+    position: absolute; top: 12px; left: 12px; z-index: 3;
+    background: rgba(26,25,23,0.8); border: 1px solid rgba(184,146,74,0.3);
+    padding: 4px 10px; font-size: 0.6rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--gold);
+  }
+
+  /* URL work card (iframe/web preview) */
+  .card-url-preview {
+    width: 100%; border: none; display: block;
+    background: rgba(255,255,255,0.02);
+  }
+  .url-hint {
+    font-size: 0.65rem; color: var(--muted); letter-spacing: 0.1em;
+    padding: 8px 20px; border-top: 1px solid rgba(184,146,74,0.08);
+    display: flex; align-items: center; gap: 6px;
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-text">Portfolio</div>
+  <div class="loader-bar"></div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">STUDIO · 作品集</a>
+  <ul class="nav-links">
+    <li><a href="#about">关于</a></li>
+    <li><a href="#resume">简历</a></li>
+    <li><a href="#interaction">交互设计</a></li>
+    <li><a href="#space">空间设计</a></li>
+    <li><a href="#graphic">平面设计</a></li>
+    <li><a href="#contact">联系</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-lines"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">设计师 · 艺术家 · 创作者</div>
+    <h1 class="hero-name">
+      <em id="heroFirstName">你的</em> 名字
+    </h1>
+    <p class="hero-subtitle">Interaction · Space · Graphic Design</p>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span>向下探索</span>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<div class="intro-quote fade-in">
+  "<span id="heroQuote">设计是沉默的诗，空间是有形的情感，每一笔都是与世界的对话。</span>"
+</div>
+
+<!-- ABOUT -->
+<section id="about" class="fade-in" style="padding-top: 100px; padding-bottom: 100px; max-width: 1400px; margin: 0 auto; padding-left: 60px; padding-right: 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;">
+  <div class="about-visual fade-in">
+    <div class="about-photo-frame" id="aboutPhotoFrame" onclick="triggerPhotoUpload()">
+      <div class="about-photo-placeholder">
+        <div class="photo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(184,146,74,0.6)" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </div>
+        <span>点击上传你的照片</span>
+      </div>
+      <img id="aboutPhoto" src="" alt="个人照片">
+    </div>
+    <button class="add-photo-btn" onclick="triggerPhotoUpload()">+ 上传照片</button>
+    <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
+  </div>
+
+  <div class="about-text-wrap fade-in">
+    <div class="section-label">自我介绍</div>
+    <h2 id="aboutName">你好，我是<br><em style="font-style:italic; color:var(--gold)" id="aboutNameText">创作者</em></h2>
+    <p class="about-bio" id="aboutBio">
+      我是一位跨领域设计师，专注于交互设计、空间设计与平面设计的融合创作。
+      用视觉讲述故事，用空间承载情感，用交互连接人与世界。
+      每一个作品都是一次探索，每一次设计都是与观者的无声对话。
+    </p>
+    <div class="about-stats">
+      <div class="stat-item fade-in">
+        <div class="stat-num" id="statYears">5</div>
+        <div class="stat-label">年设计经验</div>
+      </div>
+      <div class="stat-item fade-in">
+        <div class="stat-num" id="statProjects">30+</div>
+        <div class="stat-label">完成项目</div>
+      </div>
+      <div class="stat-item fade-in">
+        <div class="stat-num" id="statAwards">8</div>
+        <div class="stat-label">设计奖项</div>
+      </div>
+    </div>
+    <div class="skills-wrap" id="skillsWrap">
+      <span class="skill-tag">UI/UX 交互设计</span>
+      <span class="skill-tag">室内空间设计</span>
+      <span class="skill-tag">视觉平面设计</span>
+      <span class="skill-tag">品牌设计</span>
+      <span class="skill-tag">Figma</span>
+      <span class="skill-tag">AutoCAD</span>
+      <span class="skill-tag">Adobe Suite</span>
+      <span class="skill-tag">3ds Max</span>
+    </div>
+    <div style="margin-top: 32px;">
+      <button class="add-work-btn" onclick="openEditAbout()" style="margin-top: 0;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        编辑个人信息
+      </button>
+    </div>
+  </div>
+</section>
+
+<div class="divider fade-in"></div>
+
+<!-- RESUME -->
+<section id="resume" class="fade-in" style="padding: 100px 60px; max-width: 1400px; margin: 0 auto;">
+  <div class="section-label">履历</div>
+  <div class="section-title">我的<em>成长轨迹</em></div>
+  <div class="resume-grid">
+    <div>
+      <div class="resume-col-title">教育背景</div>
+      <div class="resume-item fade-in" id="edu1">
+        <div class="resume-period">2018 — 2022</div>
+        <div class="resume-role">视觉传达设计 学士</div>
+        <div class="resume-org">某艺术学院设计学院</div>
+        <div class="resume-desc">主修视觉传达、交互设计、空间设计，荣获优秀毕业生称号。</div>
+      </div>
+      <div class="resume-item fade-in" id="edu2">
+        <div class="resume-period">2022 — 2024</div>
+        <div class="resume-role">用户体验设计 硕士</div>
+        <div class="resume-org">某设计研究院</div>
+        <div class="resume-desc">研究方向：沉浸式交互体验与空间叙事设计。</div>
+      </div>
+    </div>
+    <div>
+      <div class="resume-col-title">工作经历</div>
+      <div class="resume-item fade-in" id="exp1">
+        <div class="resume-period">2022 — 2023</div>
+        <div class="resume-role">UX 设计师</div>
+        <div class="resume-org">某科技公司 · 上海</div>
+        <div class="resume-desc">负责移动端产品交互设计，主导3个核心产品的用户体验重构。</div>
+      </div>
+      <div class="resume-item fade-in" id="exp2">
+        <div class="resume-period">2023 — 至今</div>
+        <div class="resume-role">高级设计师</div>
+        <div class="resume-org">某创意设计机构 · 北京</div>
+        <div class="resume-desc">跨领域项目负责人，统筹交互、空间、平面三个方向的创作输出。</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top: 48px;">
+    <button class="add-work-btn" onclick="openEditResume()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      编辑简历信息
+    </button>
+  </div>
+</section>
+
+<div class="divider fade-in"></div>
+
+<!-- INTERACTION DESIGN -->
+<section class="portfolio-section fade-in" id="interaction">
+  <div class="portfolio-header">
+    <div>
+      <div class="section-label">作品集</div>
+      <div class="section-title" style="margin-bottom: 0;">交互<em>设计</em></div>
+    </div>
+  </div>
+  <div class="work-grid" id="interactionGrid">
+    <!-- 示例卡片 -->
+    <div class="work-card fade-in" onclick="openCard(this, 'interaction')">
+      <span class="type-indicator">UI/UX</span>
+      <div class="card-img-wrap">
+        <div class="card-placeholder">
+          <div class="add-icon">+</div>
+          <span>点击添加作品</span>
+        </div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-category">交互设计</div>
+        <div class="card-title">App 交互原型</div>
+        <div class="card-year">2024</div>
+      </div>
+      <div class="card-footer">
+        <span class="card-footer-title">点击替换作品图片或链接</span>
+        <span class="card-footer-tag">交互</span>
+      </div>
+    </div>
+    <div class="work-card fade-in" style="margin-top: 40px;" onclick="openCard(this, 'interaction')">
+      <span class="type-indicator">WEB</span>
+      <div class="card-img-wrap">
+        <div class="card-placeholder tall">
+          <div class="add-icon">+</div>
+          <span>点击添加作品</span>
+        </div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-category">交互设计</div>
+        <div class="card-title">网页交互体验</div>
+        <div class="card-year">2024</div>
+      </div>
+      <div class="card-footer">
+        <span class="card-footer-title">点击替换作品图片或链接</span>
+        <span class="card-footer-tag">交互</span>
+      </div>
+    </div>
+    <div class="work-card fade-in" onclick="openCard(this, 'interaction')">
+      <span class="type-indicator">APP</span>
+      <div class="card-img-wrap">
+        <div class="card-placeholder">
+          <div class="add-icon">+</div>
+          <span>点击添加作品</span>
+        </div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-category">交互设计</div>
+        <div class="card-title">移动端设计系统</div>
+        <div class="card-year">2023</div>
+      </div>
+      <div class="card-footer">
+        <span class="card-footer-title">点击替换作品图片或链接</span>
+        <span class="card-footer-tag">交互</span>
+      </div>
+    </div>
+  </div>
+  <button class="add-work-btn" onclick="openAddWork('interaction')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    添加交互设计作品
+  </button>
+</section>
+
+<div class="divider fade-in"></div>
+
+<!-- SPACE DESIGN -->
+<section class="portfolio-section fade-in" id="space">
+  <div class="portfolio-header">
+    <div>
+      <div class="section-label">作品集</div>
+      <div class="section-title" style="margin-bottom: 0;">空间<em>设计</em></div>
+    </div>
+  </div>
+  <div class="work-grid" id="spaceGrid">
+    <div class="work-card fade-in" style="margin-top: 60px;" onclick="openCard(this, 'space')">
+      <span class="type-indicator">室内</span>
+      <div class="card-img-wrap">
+        <div class="card-placeholder tall">
+          <div class="add-icon">+</div>
+          <span>点击添加作品</span>
+        </div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-category">空间设计</div>
+        <div class="card-title">某展览空间概念方案</div>
+        <div class="card-year">2024</div>
+      </div>
+      <div class="card-footer">
+        <span class="card-footer-title">点击替换作品图片</span>
+        <span class="card-footer-tag">空间</span>
+      </div>
+    </div>
+    <div class="work-card fade-in" onclick="openCard(this, 'space')">
+      <span class="type-indicator">展陈</span>
+      <div class="card-img-wrap">
+        <div class="card-placeholder">
+          <div class="add-icon">+</div>
+          <span>点击添加作品</span>
+        </div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-category">空间设计</div>
+        <div class="card-title">沉浸式展陈设计</div>
+        <div class="card-year">2023</div>
+      </div>
+      <div class="card-footer">
+        <span class="card-footer-title">点击替换作品图片</span>
+        <span class="card-footer-tag">空间</span>
+      </div>
+    </div>
+    <div class="work-card fade-in" onclick="openCard(this, 'space')">
+      <span class="type-indicator">概念</span>
+      <div class="card-img-wrap">
+        <div class="card-placeholder">
+          <div class="add-icon">+</div>
+          <span>点击添加作品</span>
+        </div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-category">空间设计</div>
+        <div class="card-title">商业空间设计</div>
+        <div class="card-year">2023</div>
+      </div>
+      <div class="card-footer">
+        <span class="card-footer-title">点击替换作品图片</span>
+        <span class="card-footer-tag">空间</span>
+      </div>
+    </div>
+  </div>
+  <button class="add-work-btn" onclick="openAddWork('space')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    添加空间设计作品
+  </button>
+</section>
+
+<div class="divider fade-in"></div>
+
+<!-- GRAPHIC DESIGN -->
+<section class="portfolio-section fade-in" id="graphic">
+  <div class="portfolio-header">
+    <div>
+      <div class="section-label">作品集</div>
+      <div class="section-title" style="margin-bottom: 0;">平面<em>设计</em></div>
+    </div>
+  </div>
+  <div class="work-grid" id="graphicGrid">
+    <div class="work-card fade-in" onclick="openCard(this, 'graphic')">
+      <span class="type-indicator">品牌</span>
+      <div class="card-img-wrap">
+        <div class="card-placeholder">
+          <div class="add-icon">+</div>
+          <span>点击添加作品</span>
+        </div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-category">平面设计</div>
+        <div class="card-title">品牌视觉系统</div>
+        <div class="card-year">2024</div>
+      </div>
+      <div class="card-footer">
+        <span class="card-footer-title">点击替换作品图片</span>
+        <span class="card-footer-tag">平面</span>
+      </div>
+    </div>
+    <div class="work-card fade-in" style="margin-top: 30px;" onclick="openCard(this, 'graphic')">
+      <span class="type-indicator">海报</span>
+      <div class="card-img-wrap">
+        <div class="card-placeholder tall">
+          <div class="add-icon">+</div>
+          <span>点击添加作品</span>
+        </div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-category">平面设计</div>
+        <div class="card-title">系列海报创作</div>
+        <div class="card-year">2023</div>
+      </div>
+      <div class="card-footer">
+        <span class="card-footer-title">点击替换作品图片</span>
+        <span class="card-footer-tag">平面</span>
+      </div>
+    </div>
+    <div class="work-card fade-in" onclick="openCard(this, 'graphic')">
+      <span class="type-indicator">排版</span>
+      <div class="card-img-wrap">
+        <div class="card-placeholder">
+          <div class="add-icon">+</div>
+          <span>点击添加作品</span>
+        </div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-category">平面设计</div>
+        <div class="card-title">书籍装帧设计</div>
+        <div class="card-year">2023</div>
+      </div>
+      <div class="card-footer">
+        <span class="card-footer-title">点击替换作品图片</span>
+        <span class="card-footer-tag">平面</span>
+      </div>
+    </div>
+  </div>
+  <button class="add-work-btn" onclick="openAddWork('graphic')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    添加平面设计作品
+  </button>
+</section>
+
+<!-- CONTACT -->
+<div id="contact">
+  <div class="section-label" style="justify-content: center; margin-bottom: 12px;">联系我</div>
+  <div class="section-title" style="max-width: 600px; margin: 0 auto 24px;">让我们共同<em>创造</em></div>
+  <p class="contact-sub" id="contactSub">无论是合作项目还是创意对话，我都期待与你相遇。</p>
+  <div class="contact-links">
+    <a href="mailto:your@email.com" class="contact-link" id="contactEmail">your@email.com</a>
+    <a href="#" class="contact-link" id="contactWechat">WeChat: yourID</a>
+    <a href="#" class="contact-link" id="contactIG">Instagram</a>
+    <a href="#" class="contact-link" id="contactBehance">Behance</a>
+  </div>
+  <div style="margin-top: 40px;">
+    <button class="add-work-btn" onclick="openEditContact()" style="margin: 0 auto; display: flex;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      编辑联系信息
+    </button>
+  </div>
+</div>
+
+<footer>
+  <p>© <span id="footerYear"></span> &nbsp;·&nbsp; Crafted with care &nbsp;·&nbsp; All rights reserved</p>
+</footer>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <div class="lightbox-close" onclick="closeLightbox()">✕</div>
+  <div class="lightbox-inner" id="lightboxInner"></div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div id="uploadModal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle">添加作品</div>
+    <input type="hidden" id="currentSection">
+    <div class="form-group">
+      <label>作品标题</label>
+      <input type="text" id="workTitle" placeholder="输入作品标题">
+    </div>
+    <div class="form-group">
+      <label>作品类型</label>
+      <select id="workType">
+        <option value="image">图片作品</option>
+        <option value="url">网页/链接</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>作品年份</label>
+      <input type="text" id="workYear" placeholder="如：2024">
+    </div>
+    <div class="form-group">
+      <label>作品描述</label>
+      <textarea id="workDesc" placeholder="简短描述这件作品..."></textarea>
+    </div>
+    <div id="imageUploadArea">
+      <div class="form-group">
+        <label>上传图片</label>
+        <div class="drop-zone" id="dropZone" onclick="document.getElementById('workImageInput').click()">
+          <div class="drop-zone-icon">⊕</div>
+          <div>点击选择图片，或拖拽文件到此处</div>
+          <div style="font-size: 0.7rem; margin-top: 8px; color: rgba(138,134,128,0.6);">支持 JPG、PNG、GIF、WebP</div>
+        </div>
+        <input type="file" id="workImageInput" accept="image/*" style="display:none">
+        <div id="imagePreviewWrap" style="display:none; margin-top: 12px;">
+          <img id="imagePreview" style="max-width: 100%; max-height: 200px; border: 1px solid rgba(184,146,74,0.2);">
+        </div>
+      </div>
+    </div>
+    <div id="urlInputArea" style="display:none;">
+      <div class="form-group">
+        <label>网页地址 URL</label>
+        <input type="url" id="workUrl" placeholder="https://example.com">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">取消</button>
+      <button class="btn-primary" onclick="saveWork()">保存作品</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT ABOUT MODAL -->
+<div id="editAboutModal" style="position:fixed;inset:0;z-index:9995;background:rgba(26,25,23,0.9);display:none;align-items:center;justify-content:center;">
+  <div class="modal-box" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
+    <div class="modal-title">编辑个人信息</div>
+    <div class="form-group"><label>姓名</label><input id="editName" type="text" placeholder="你的名字"></div>
+    <div class="form-group"><label>艺术家宣言 / 引言</label><textarea id="editQuote" placeholder="一句描述你设计理念的话..."></textarea></div>
+    <div class="form-group"><label>自我介绍</label><textarea id="editBio" style="min-height:120px" placeholder="介绍你自己..."></textarea></div>
+    <div class="form-group"><label>设计年限</label><input id="editYears" type="text" placeholder="5"></div>
+    <div class="form-group"><label>完成项目数</label><input id="editProjects" type="text" placeholder="30+"></div>
+    <div class="form-group"><label>获奖数量</label><input id="editAwards" type="text" placeholder="8"></div>
+    <div class="form-group"><label>技能标签（用逗号分隔）</label><input id="editSkills" type="text" placeholder="UI/UX, 空间设计, 品牌设计..."></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="document.getElementById('editAboutModal').style.display='none'">取消</button>
+      <button class="btn-primary" onclick="saveAbout()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT RESUME MODAL -->
+<div id="editResumeModal" style="position:fixed;inset:0;z-index:9995;background:rgba(26,25,23,0.9);display:none;align-items:center;justify-content:center;">
+  <div class="modal-box" style="max-width: 700px; max-height: 90vh; overflow-y: auto;">
+    <div class="modal-title">编辑简历</div>
+    <div style="font-size: 0.75rem; color: var(--muted); margin-bottom: 24px; letter-spacing: 0.05em;">在下方直接修改各项信息</div>
+    <div style="font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px;">教育背景</div>
+    <div class="form-group"><label>时间段 1</label><input id="rEduP1" type="text" placeholder="2018 — 2022"></div>
+    <div class="form-group"><label>学位/专业 1</label><input id="rEduR1" type="text"></div>
+    <div class="form-group"><label>学校 1</label><input id="rEduO1" type="text"></div>
+    <div class="form-group"><label>描述 1</label><textarea id="rEduD1"></textarea></div>
+    <div class="form-group"><label>时间段 2</label><input id="rEduP2" type="text" placeholder="2022 — 2024"></div>
+    <div class="form-group"><label>学位/专业 2</label><input id="rEduR2" type="text"></div>
+    <div class="form-group"><label>学校 2</label><input id="rEduO2" type="text"></div>
+    <div class="form-group"><label>描述 2</label><textarea id="rEduD2"></textarea></div>
+    <div style="font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin: 24px 0 16px;">工作经历</div>
+    <div class="form-group"><label>时间段 1</label><input id="rExpP1" type="text" placeholder="2022 — 2023"></div>
+    <div class="form-group"><label>职位 1</label><input id="rExpR1" type="text"></div>
+    <div class="form-group"><label>公司 1</label><input id="rExpO1" type="text"></div>
+    <div class="form-group"><label>描述 1</label><textarea id="rExpD1"></textarea></div>
+    <div class="form-group"><label>时间段 2</label><input id="rExpP2" type="text" placeholder="2023 — 至今"></div>
+    <div class="form-group"><label>职位 2</label><input id="rExpR2" type="text"></div>
+    <div class="form-group"><label>公司 2</label><input id="rExpO2" type="text"></div>
+    <div class="form-group"><label>描述 2</label><textarea id="rExpD2"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="document.getElementById('editResumeModal').style.display='none'">取消</button>
+      <button class="btn-primary" onclick="saveResume()">保存简历</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT CONTACT MODAL -->
+<div id="editContactModal" style="position:fixed;inset:0;z-index:9995;background:rgba(26,25,23,0.9);display:none;align-items:center;justify-content:center;">
+  <div class="modal-box" style="max-width: 520px;">
+    <div class="modal-title">编辑联系信息</div>
+    <div class="form-group"><label>邮箱</label><input id="editEmail" type="text" placeholder="your@email.com"></div>
+    <div class="form-group"><label>微信号</label><input id="editWechat" type="text" placeholder="yourWechatID"></div>
+    <div class="form-group"><label>Instagram 链接</label><input id="editIG" type="text" placeholder="https://instagram.com/..."></div>
+    <div class="form-group"><label>Behance 链接</label><input id="editBehance" type="text" placeholder="https://behance.net/..."></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="document.getElementById('editContactModal').style.display='none'">取消</button>
+      <button class="btn-primary" onclick="saveContact()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- CARD EDIT MODAL -->
+<div id="cardEditModal" style="position:fixed;inset:0;z-index:9996;background:rgba(26,25,23,0.92);display:none;align-items:center;justify-content:center;">
+  <div class="modal-box" style="max-width: 520px;">
+    <div class="modal-title">编辑作品卡片</div>
+    <input type="hidden" id="editCardSection">
+    <div class="form-group"><label>作品标题</label><input id="editCardTitle" type="text"></div>
+    <div class="form-group"><label>年份</label><input id="editCardYear" type="text"></div>
+    <div class="form-group"><label>类型标签</label><input id="editCardType" type="text" placeholder="如：UI/UX / 品牌 / 海报"></div>
+    <div class="form-group">
+      <label>媒体类型</label>
+      <select id="editCardMediaType">
+        <option value="image">图片</option>
+        <option value="url">网页链接</option>
+      </select>
+    </div>
+    <div id="editCardImageArea">
+      <div class="form-group">
+        <label>替换图片</label>
+        <div class="drop-zone" onclick="document.getElementById('editCardImageInput').click()" style="padding: 20px;">
+          点击上传新图片
+        </div>
+        <input type="file" id="editCardImageInput" accept="image/*" style="display:none">
+        <div id="editCardPreviewWrap" style="display:none; margin-top: 12px;">
+          <img id="editCardPreview" style="max-width: 100%; max-height: 160px; border: 1px solid rgba(184,146,74,0.2);">
+        </div>
+      </div>
+    </div>
+    <div id="editCardUrlArea" style="display:none;">
+      <div class="form-group"><label>网页 URL</label><input type="url" id="editCardUrl" placeholder="https://..."></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="document.getElementById('cardEditModal').style.display='none'">取消</button>
+      <button class="btn-primary" onclick="saveCardEdit()">保存修改</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── LOADER ───
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
+  }, 2000);
+});
+
+// ─── FOOTER YEAR ───
+document.getElementById('footerYear').textContent = new Date().getFullYear();
+
+// ─── CURSOR ───
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+(function animCursor() {
+  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+  cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+  cursorRing.style.left = rx + 'px'; cursorRing.style.top = ry + 'px';
+  requestAnimationFrame(animCursor);
+})();
+document.querySelectorAll('a,button,.work-card,.about-photo-frame').forEach(el => {
+  el.addEventListener('mouseenter', () => cursorRing.style.transform = 'translate(-50%,-50%) scale(1.6)');
+  el.addEventListener('mouseleave', () => cursorRing.style.transform = 'translate(-50%,-50%) scale(1)');
+});
+
+// ─── SCROLL ANIMATIONS ───
+const fadeEls = document.querySelectorAll('.fade-in');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.1 });
+fadeEls.forEach(el => io.observe(el));
+
+// ─── PHOTO UPLOAD ───
+function triggerPhotoUpload() { document.getElementById('photoInput').click(); }
+function handlePhotoUpload(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    document.getElementById('aboutPhoto').src = ev.target.result;
+    document.getElementById('aboutPhotoFrame').classList.add('has-image');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ─── CARD OPEN (edit existing card) ───
+let currentEditCard = null;
+function openCard(cardEl, section) {
+  currentEditCard = cardEl;
+  document.getElementById('editCardSection').value = section;
+  const titleEl = cardEl.querySelector('.card-title');
+  const yearEl = cardEl.querySelector('.card-year');
+  const typeEl = cardEl.querySelector('.type-indicator');
+  document.getElementById('editCardTitle').value = titleEl ? titleEl.textContent : '';
+  document.getElementById('editCardYear').value = yearEl ? yearEl.textContent : '';
+  document.getElementById('editCardType').value = typeEl ? typeEl.textContent : '';
+  document.getElementById('editCardImageArea').style.display = 'block';
+  document.getElementById('editCardUrlArea').style.display = 'none';
+  document.getElementById('editCardPreviewWrap').style.display = 'none';
+  document.getElementById('cardEditModal').style.display = 'flex';
+}
+
+document.getElementById('editCardMediaType').addEventListener('change', function() {
+  document.getElementById('editCardImageArea').style.display = this.value === 'image' ? 'block' : 'none';
+  document.getElementById('editCardUrlArea').style.display = this.value === 'url' ? 'block' : 'none';
+});
+
+document.getElementById('editCardImageInput').addEventListener('change', function() {
+  const file = this.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    document.getElementById('editCardPreview').src = ev.target.result;
+    document.getElementById('editCardPreviewWrap').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+});
+
+function saveCardEdit() {
+  if (!currentEditCard) return;
+  const title = document.getElementById('editCardTitle').value;
+  const year = document.getElementById('editCardYear').value;
+  const type = document.getElementById('editCardType').value;
+  const mediaType = document.getElementById('editCardMediaType').value;
+  if (title) {
+    const te = currentEditCard.querySelector('.card-title'); if(te) te.textContent = title;
+    const ft = currentEditCard.querySelector('.card-footer-title'); if(ft) ft.textContent = title;
+  }
+  if (year) { const ye = currentEditCard.querySelector('.card-year'); if(ye) ye.textContent = year; }
+  if (type) { const ti = currentEditCard.querySelector('.type-indicator'); if(ti) ti.textContent = type; }
+
+  if (mediaType === 'image') {
+    const preview = document.getElementById('editCardPreview').src;
+    if (preview && preview.startsWith('data:')) {
+      const wrap = currentEditCard.querySelector('.card-img-wrap');
+      const ph = wrap.querySelector('.card-placeholder');
+      if (ph) ph.style.display = 'none';
+      let img = wrap.querySelector('img');
+      if (!img) { img = document.createElement('img'); img.className = 'card-img'; wrap.appendChild(img); }
+      img.src = preview; img.style.display = 'block';
+      const overlay = currentEditCard.querySelector('.card-overlay');
+      if (overlay) { overlay.style.opacity = '0'; overlay.style.transition = 'opacity 0.4s'; }
+    }
+  } else if (mediaType === 'url') {
+    const url = document.getElementById('editCardUrl').value;
+    if (url) {
+      const wrap = currentEditCard.querySelector('.card-img-wrap');
+      wrap.innerHTML = '';
+      const hint = document.createElement('div');
+      hint.className = 'url-hint';
+      hint.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> ${url}`;
+      const div = document.createElement('div');
+      div.style.cssText = 'padding: 16px 20px; font-size: 0.8rem; color: var(--muted);';
+      div.textContent = '🔗 网页作品：点击查看 →';
+      div.style.cursor = 'pointer';
+      div.onclick = ev => { ev.stopPropagation(); window.open(url, '_blank'); };
+      const placeholder = document.createElement('div');
+      placeholder.className = 'card-placeholder';
+      placeholder.style.cssText = 'aspect-ratio:3/2; cursor:pointer;';
+      placeholder.innerHTML = `<div style="font-size:2rem; opacity:0.4">🔗</div><div style="font-size:0.8rem; color:var(--gold);">${url.length > 40 ? url.slice(0,40)+'...' : url}</div>`;
+      placeholder.onclick = ev => { ev.stopPropagation(); window.open(url, '_blank'); };
+      wrap.appendChild(placeholder);
+    }
+  }
+
+  document.getElementById('cardEditModal').style.display = 'none';
+}
+
+// ─── ADD NEW WORK ───
+let addingSection = '';
+function openAddWork(section) {
+  addingSection = section;
+  document.getElementById('modalTitle').textContent = { interaction: '添加交互设计作品', space: '添加空间设计作品', graphic: '添加平面设计作品' }[section] || '添加作品';
+  document.getElementById('currentSection').value = section;
+  document.getElementById('workTitle').value = '';
+  document.getElementById('workYear').value = new Date().getFullYear();
+  document.getElementById('workDesc').value = '';
+  document.getElementById('workUrl').value = '';
+  document.getElementById('imagePreviewWrap').style.display = 'none';
+  document.getElementById('imageUploadArea').style.display = 'block';
+  document.getElementById('urlInputArea').style.display = 'none';
+  document.getElementById('workType').value = 'image';
+  document.getElementById('uploadModal').classList.add('open');
+}
+
+document.getElementById('workType').addEventListener('change', function() {
+  document.getElementById('imageUploadArea').style.display = this.value === 'image' ? 'block' : 'none';
+  document.getElementById('urlInputArea').style.display = this.value === 'url' ? 'block' : 'none';
+});
+
+document.getElementById('workImageInput').addEventListener('change', function() {
+  const file = this.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    document.getElementById('imagePreview').src = ev.target.result;
+    document.getElementById('imagePreviewWrap').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+});
+
+// Drag and drop
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      document.getElementById('imagePreview').src = ev.target.result;
+      document.getElementById('imagePreviewWrap').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+function closeModal() { document.getElementById('uploadModal').classList.remove('open'); }
+
+function saveWork() {
+  const section = document.getElementById('currentSection').value;
+  const title = document.getElementById('workTitle').value || '未命名作品';
+  const year = document.getElementById('workYear').value || new Date().getFullYear();
+  const type = document.getElementById('workType').value;
+  const tagMap = { interaction: '交互', space: '空间', graphic: '平面' };
+  const catMap = { interaction: '交互设计', space: '空间设计', graphic: '平面设计' };
+
+  const card = document.createElement('div');
+  card.className = 'work-card fade-in visible';
+  card.onclick = function() { openCard(this, section); };
+
+  if (type === 'image') {
+    const imgSrc = document.getElementById('imagePreview').src;
+    const imgHtml = imgSrc && imgSrc.startsWith('data:')
+      ? `<img class="card-img" src="${imgSrc}" style="display:block; width:100%;">`
+      : `<div class="card-placeholder"><div class="add-icon">+</div><span>点击编辑</span></div>`;
+    card.innerHTML = `
+      <span class="type-indicator">${document.getElementById('workType').value.toUpperCase()}</span>
+      <div class="card-img-wrap">${imgHtml}</div>
+      <div class="card-overlay">
+        <div class="card-category">${catMap[section]}</div>
+        <div class="card-title">${title}</div>
+        <div class="card-year">${year}</div>
+      </div>
+      <div class="card-footer">
+        <span class="card-footer-title">${title}</span>
+        <span class="card-footer-tag">${tagMap[section]}</span>
+      </div>`;
+  } else {
+    const url = document.getElementById('workUrl').value;
+    card.innerHTML = `
+      <span class="type-indicator">WEB</span>
+      <div class="card-img-wrap">
+        <div class="card-placeholder" style="cursor:pointer;" onclick="event.stopPropagation(); window.open('${url}','_blank')">
+          <div style="font-size:2rem; opacity:0.5">🔗</div>
+          <div style="font-size:0.75rem; color:var(--gold); max-width: 90%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${url}</div>
+        </div>
+      </div>
+      <div class="card-overlay">
+        <div class="card-category">${catMap[section]}</div>
+        <div class="card-title">${title}</div>
+        <div class="card-year">${year}</div>
+      </div>
+      <div class="card-footer">
+        <span class="card-footer-title">${title}</span>
+        <span class="card-footer-tag">${tagMap[section]}</span>
+      </div>`;
+  }
+
+  const grid = document.getElementById(section + 'Grid');
+  grid.appendChild(card);
+  closeModal();
+}
+
+// ─── LIGHTBOX ───
+function openLightbox(src) {
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightboxInner').innerHTML = `<img src="${src}" alt="作品大图">`;
+  lb.classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+// ─── EDIT ABOUT ───
+function openEditAbout() {
+  document.getElementById('editName').value = document.getElementById('aboutNameText').textContent;
+  document.getElementById('editQuote').value = document.getElementById('heroQuote').textContent;
+  document.getElementById('editBio').value = document.getElementById('aboutBio').textContent.trim();
+  document.getElementById('editYears').value = document.getElementById('statYears').textContent;
+  document.getElementById('editProjects').value = document.getElementById('statProjects').textContent;
+  document.getElementById('editAwards').value = document.getElementById('statAwards').textContent;
+  const tags = Array.from(document.getElementById('skillsWrap').querySelectorAll('.skill-tag')).map(el => el.textContent);
+  document.getElementById('editSkills').value = tags.join(', ');
+  document.getElementById('editAboutModal').style.display = 'flex';
+}
+
+function saveAbout() {
+  const name = document.getElementById('editName').value;
+  if (name) {
+    document.getElementById('aboutNameText').textContent = name;
+    document.getElementById('heroFirstName').textContent = name;
+  }
+  const quote = document.getElementById('editQuote').value;
+  if (quote) document.getElementById('heroQuote').textContent = quote;
+  const bio = document.getElementById('editBio').value;
+  if (bio) document.getElementById('aboutBio').textContent = bio;
+  document.getElementById('statYears').textContent = document.getElementById('editYears').value;
+  document.getElementById('statProjects').textContent = document.getElementById('editProjects').value;
+  document.getElementById('statAwards').textContent = document.getElementById('editAwards').value;
+  const skillStr = document.getElementById('editSkills').value;
+  if (skillStr) {
+    const skills = skillStr.split(',').map(s => s.trim()).filter(Boolean);
+    const wrap = document.getElementById('skillsWrap');
+    wrap.innerHTML = skills.map(s => `<span class="skill-tag">${s}</span>`).join('');
+  }
+  document.getElementById('editAboutModal').style.display = 'none';
+}
+
+// ─── EDIT RESUME ───
+function openEditResume() {
+  const edu = document.querySelectorAll('#resume .resume-col-title')[0];
+  const items = document.querySelectorAll('#resume .resume-item');
+  const fill = (id, el, sel) => { const e = el.querySelector(sel); if(e) document.getElementById(id).value = e.textContent.trim(); };
+  if (items[0]) { fill('rEduP1',items[0],'.resume-period'); fill('rEduR1',items[0],'.resume-role'); fill('rEduO1',items[0],'.resume-org'); fill('rEduD1',items[0],'.resume-desc'); }
+  if (items[1]) { fill('rEduP2',items[1],'.resume-period'); fill('rEduR2',items[1],'.resume-role'); fill('rEduO2',items[1],'.resume-org'); fill('rEduD2',items[1],'.resume-desc'); }
+  if (items[2]) { fill('rExpP1',items[2],'.resume-period'); fill('rExpR1',items[2],'.resume-role'); fill('rExpO1',items[2],'.resume-org'); fill('rExpD1',items[2],'.resume-desc'); }
+  if (items[3]) { fill('rExpP2',items[3],'.resume-period'); fill('rExpR2',items[3],'.resume-role'); fill('rExpO2',items[3],'.resume-org'); fill('rExpD2',items[3],'.resume-desc'); }
+  document.getElementById('editResumeModal').style.display = 'flex';
+}
+
+function saveResume() {
+  const items = document.querySelectorAll('#resume .resume-item');
+  const set = (item, sel, val) => { const e = item.querySelector(sel); if(e && val) e.textContent = val; };
+  if (items[0]) { set(items[0],'.resume-period',document.getElementById('rEduP1').value); set(items[0],'.resume-role',document.getElementById('rEduR1').value); set(items[0],'.resume-org',document.getElementById('rEduO1').value); set(items[0],'.resume-desc',document.getElementById('rEduD1').value); }
+  if (items[1]) { set(items[1],'.resume-period',document.getElementById('rEduP2').value); set(items[1],'.resume-role',document.getElementById('rEduR2').value); set(items[1],'.resume-org',document.getElementById('rEduO2').value); set(items[1],'.resume-desc',document.getElementById('rEduD2').value); }
+  if (items[2]) { set(items[2],'.resume-period',document.getElementById('rExpP1').value); set(items[2],'.resume-role',document.getElementById('rExpR1').value); set(items[2],'.resume-org',document.getElementById('rExpO1').value); set(items[2],'.resume-desc',document.getElementById('rExpD1').value); }
+  if (items[3]) { set(items[3],'.resume-period',document.getElementById('rExpP2').value); set(items[3],'.resume-role',document.getElementById('rExpR2').value); set(items[3],'.resume-org',document.getElementById('rExpO2').value); set(items[3],'.resume-desc',document.getElementById('rExpD2').value); }
+  document.getElementById('editResumeModal').style.display = 'none';
+}
+
+// ─── EDIT CONTACT ───
+function openEditContact() {
+  document.getElementById('editEmail').value = document.getElementById('contactEmail').textContent;
+  document.getElementById('editWechat').value = document.getElementById('contactWechat').textContent.replace('WeChat: ','');
+  document.getElementById('editIG').value = document.getElementById('contactIG').href;
+  document.getElementById('editBehance').value = document.getElementById('contactBehance').href;
+  document.getElementById('editContactModal').style.display = 'flex';
+}
+
+function saveContact() {
+  const email = document.getElementById('editEmail').value;
+  const wechat = document.getElementById('editWechat').value;
+  const ig = document.getElementById('editIG').value;
+  const be = document.getElementById('editBehance').value;
+  if (email) { document.getElementById('contactEmail').textContent = email; document.getElementById('contactEmail').href = 'mailto:' + email; }
+  if (wechat) document.getElementById('contactWechat').textContent = 'WeChat: ' + wechat;
+  if (ig) document.getElementById('contactIG').href = ig;
+  if (be) document.getElementById('contactBehance').href = be;
+  document.getElementById('editContactModal').style.display = 'none';
+}
+
+// ─── ESC TO CLOSE MODALS ───
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.getElementById('lightbox').classList.remove('open');
+    document.getElementById('uploadModal').classList.remove('open');
+    ['editAboutModal','editResumeModal','editContactModal','cardEditModal'].forEach(id => {
+      document.getElementById(id).style.display = 'none';
+    });
+  }
+});
+
+// ─── PARALLAX ───
+document.addEventListener('scroll', () => {
+  const sy = window.scrollY;
+  const heroLines = document.querySelector('.hero-lines');
+  if (heroLines) heroLines.style.transform = `translateY(${sy * 0.3}px)`;
+});
+</script>
+</body>
+</html>
